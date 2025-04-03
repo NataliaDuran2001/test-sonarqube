@@ -1,0 +1,23 @@
+{
+  "name": "express-sonarqube-demo",
+  "version": "1.0.0",
+  "description": "Proyecto base Express para análisis con SonarQube",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "sonar": "sonar-scanner"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.6",
+    "debug": "~4.3.4",
+    "ejs": "~3.1.9",
+    "express": "~4.18.2",
+    "http-errors": "~2.0.0",
+    "morgan": "~1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "sonarqube-scanner": "^3.1.0"
+  }
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><%= title %></h1>
+      <p><%= description %></p>
+    </header>
+    
+    <main>
+      <section class="card">
+        <h2>API de Usuarios</h2>
+        <p>Esta aplicación incluye una API RESTful para gestionar usuarios.</p>
+        
+        <div class="controls">
+          <button id="loadUsers">Cargar Usuarios</button>
+          <button id="addUser">Añadir Usuario</button>
+        </div>
+        
+        <div id="userForm" style="display: none;">
+          <h3>Añadir nuevo usuario</h3>
+          <form id="newUserForm">
+            <div class="form-group">
+              <label for="userName">Nombre:</label>
+              <input type="text" id="userName" required>
+            </div>
+            <div class="form-group">
+              <label for="userEmail">Email:</label>
+              <input type="email" id="userEmail" required>
+            </div>
+            <button type="submit">Guardar</button>
+          </form>
+        </div>
+        
+        <div id="usersList"></div>
+      </section>
+      
+      <section class="card">
+        <h2>SonarQube Demo</h2>
+        <p>Esta aplicación contiene varios problemas deliberados para que SonarQube los identifique:</p>
+        <ul>
+          <li>Vulnerabilidades de seguridad</li>
+          <li>Code smells</li>
+          <li>Problemas de mantenibilidad</li>
+          <li>Duplicación de código</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Código JavaScript con problemas deliberados para SonarQube
+    var loadUsersButton = document.getElementById('loadUsers');
+    var addUserButton = document.getElementById('addUser');
+    var usersList = document.getElementById('usersList');
+    var userForm = document.getElementById('userForm');
+    var newUserForm = document.getElementById('newUserForm');
+    
+    // Función para cargar usuarios
+    loadUsersButton.addEventListener('click', function() {
+      // Uso de XMLHttpRequest en lugar de fetch
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/users', true);
+      
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          // Análisis de la respuesta
+          var response = JSON.parse(xhr.responseText);
+          
+          // Limpiar lista anterior
+          usersList.innerHTML = '';
+          
+          // Manipulación ineficiente del DOM - deliberadamente
+          for (var i = 0; i < response.users.length; i++) {
+            var user = response.users[i];
+            usersList.innerHTML += '<div class="user-item">' + 
+              '<h3>' + user.name + '</h3>' +
+              '<p>' + user.email + '</p>' +
+              '<button onclick="deleteUser(' + user.id + ')">Eliminar</button>' +
+              '</div>';
+          }
+        } else {
+          console.error('Error en la solicitud. Estado:', xhr.status);
+          alert('Error al cargar usuarios');
+        }
+      };
+      
+      xhr.send();
+    });
+    
+    // Toggle del formulario
+    addUserButton.addEventListener('click', function() {
+      if (userForm.style.display === 'none') {
+        userForm.style.display = 'block';
+      } else {
+        userForm.style.display = 'none';
+      }
+    });
+    
+    // Envío de formulario
+    newUserForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      var name = document.getElementById('userName').value;
+      var email = document.getElementById('userEmail').value;
+      
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/users', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      
+      xhr.onload = function() {
+        if (xhr.status === 201) {
+          alert('Usuario creado correctamente');
+          loadUsersButton.click(); // Recargar la lista
+          newUserForm.reset();
+          userForm.style.display = 'none';
+        } else {
+          alert('Error al crear usuario');
+        }
+      };
+      
+      xhr.send(JSON.stringify({ name: name, email: email }));
+    });
+    
+    // Función para eliminar usuario
+    function deleteUser(id) {
+      if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('DELETE', '/users/' + id, true);
+        
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            alert('Usuario eliminado correctamente');
+            loadUsersButton.click(); // Recargar la lista
+          } else {
+            alert('Error al eliminar usuario');
+          }
+        };
+        
+        xhr.send();
+      }
+    }
+  </script>
+</body>
+</html>
